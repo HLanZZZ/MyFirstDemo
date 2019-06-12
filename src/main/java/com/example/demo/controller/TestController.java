@@ -2,8 +2,15 @@ package com.example.demo.controller;
 
 
 import com.example.demo.service.BookingService;
+import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RestController
 public class TestController {
@@ -49,13 +56,50 @@ public class TestController {
     //在Java中，只要一个线程没有执行完（一个线程在运行），则整个Java的进程不会消失，所以此时可以设置一个后台线程，这样即使java线程结束了，则后台线程
     // 依旧会继续执行。要想实现这个操作，要使用setDaemon()方法完成。
 
+//    class SampleThread extends Thread {
+//        //test daemon
+//        public void run() {
+//
+//            int i = 0;
+//            while (true){
+//                System.out.println(i+"????"+Thread.currentThread().getName());
+//            }
+//        }
+//    }
+
+
+//    class SampleThread extends Thread {
+//        // getPriority()
+//        public void run() {
+//            for (int i=0 ;i < 5 ; i++){
+//            try {
+//                Thread.sleep(500);
+//            }catch (InterruptedException e){
+//
+//            }
+//                System.out.println(Thread.currentThread().getName());
+//            }
+//
+//        }
+//    }
+
+
     class SampleThread extends Thread {
-        //test daemon
+        // yield()
         public void run() {
-            int i = 0;
-            while (true){
-                System.out.println(i+"????"+Thread.currentThread().getName());
+            for (int i=0 ;i < 5; i++){
+                try {
+                    Thread.sleep(500);
+                }catch (Exception e){
+                }
+                System.out.println(Thread.currentThread().getName());
+                if (i == 2){
+                    System.out.println(Thread.currentThread().getName()+"线程礼让");
+                    Thread.currentThread().yield();
+                }
+
             }
+
         }
     }
 
@@ -206,9 +250,80 @@ public class TestController {
         thread1.setDaemon(true); //设置后台运行
         thread1.start();
 
+        // String replace 的用法
         String str = "123456";
         str.replace("123456","110");
 
+    }
+
+    //getPriority() 获取线程优先级
+
+    @RequestMapping("/getPriority")
+    public void getPriority(){
+
+        Thread thread1 = new SampleThread();
+        Thread thread2 = new SampleThread();
+        Thread thread3 = new SampleThread();
+        thread1.setName("huazai");
+        thread2.setName("A");
+        thread3.setName("B");
+
+        thread1.setPriority(Thread.MIN_PRIORITY);
+        thread2.setPriority(Thread.NORM_PRIORITY);
+        thread3.setPriority(Thread.MAX_PRIORITY);
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+//
+//        B
+//        A
+//        huazai
+//        B
+//        A
+//        huazai
+//        B
+//        A
+//        huazai
+//        B
+//        A
+//        huazai
+//        B
+//        A
+//        huazai
+    }
+
+
+
+    @RequestMapping("/yield")
+    public void yield() {
+
+        Thread thread1 = new SampleThread();
+        Thread thread2 = new SampleThread();
+        Thread thread3 = new SampleThread();
+        thread1.setName("C");
+        thread2.setName("A");
+        thread3.setName("B");
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+
+    }
+    @RequestMapping("/testDate")
+    public void testDate(){
+
+        String date1 ="2019-07-13";
+
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("YYYY-MM-DD").parse(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        String result = new SimpleDateFormat().format(date);
+
+        System.out.println(result);
     }
 
 
