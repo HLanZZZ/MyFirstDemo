@@ -11,13 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 
@@ -49,7 +45,6 @@ public class AncillaryBookingController {
 //    }
 
 
-
     //if fails to connect to the DB or time-out
     // By bookingRef find All difference bookingId to get (AncillaryBookingVo) passengerList and segmentList and AncillaryProducts
     @Transactional(timeout = 6)
@@ -58,8 +53,11 @@ public class AncillaryBookingController {
 
         // check if bookingRef missing  return AESSS_ERR_E003
 
-        // check if productType = seat or lounge  return AESSS_ERR_E003
+        if (bookingRef == null){
+            throw new CommonWebServiceException(HttpStatusEnum.RLOC_MISSING, HttpSourceEnum.SOURCE.toString());
+        }
 
+        // check if productType = seat or lounge  return AESSS_ERR_E003
 
 
         //get bookingIdList
